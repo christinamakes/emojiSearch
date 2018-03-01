@@ -5,7 +5,7 @@ export default function searchBox(props) {
   return (
     <div className = 'search-box'>
       <form className = 'search-form' onSubmit={e => {e.preventDefault()}}>
-        <label for='input'>Search Emojis</label>
+        <label htmlFor='input'>Search Emojis</label>
         <input 
           type = 'text' 
           name = 'input'

@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchBox from './searchBox';
 import Results from './results';
+import Page from './page';
 import EmojiList from '../../../src/emoji.json'
 
 export default class App extends React.Component {
@@ -9,18 +10,28 @@ export default class App extends React.Component {
 
     this.state = {
       emojis: EmojiList,
-      filter: ''
+      filter: '',
+      currentPage: 1,
+      emojisPerPage: 10
     }
   }
   
   filterEmoji(filterValue) {
-    this.setState({filter: filterValue});
-    this.setState({emojis: EmojiList.filter(emoji => {
-      return emoji.keywords.toUpperCase().includes(filterValue.toUpperCase());
+    this.setState({currentPage: 1, 
+                filter: filterValue,
+                emojis: EmojiList.filter(emoji => {
+      return emoji.name.toUpperCase().includes(filterValue.toUpperCase()) ||
+              emoji.code.toUpperCase().includes(filterValue.toUpperCase()) ;
     })}
-    )}; 
+  )}; 
+
 
   render() {
+    console.log('rendered')
+    const { currentPage, emojisPerPage } = this.state;
+    const indexOfLastChar= currentPage * emojisPerPage;
+    const indexOfFirstChar= indexOfLastChar - emojisPerPage;
+
     return (
       <div className = 'app'>
         <SearchBox 
@@ -28,7 +39,14 @@ export default class App extends React.Component {
           value={this.state.filter}
           />
         <Results 
-          emojis = {this.state.emojis} />
+          emojis = {this.state.emojis}
+          endChar= { indexOfLastChar }
+          startChar= { indexOfFirstChar }
+          />
+        <Page 
+        isFirstPage= {this.state.currentPage === 1}
+        nextPage= {() => this.setState({currentPage: this.state.currentPage + 1 })}
+        prevPage= {() => this.setState({currentPage: this.state.currentPage - 1 })} />
       </div>
     )
   }
